@@ -140,9 +140,11 @@ const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTc9JpCGgKdNK_
 const DEFAULT_IMAGE = "https://via.placeholder.com/400x220?text=No+Image";
 
 let allProducts = [];
+let filteredProducts = [];
 let currentPage = 1;
 const itemsPerPage = 8;
 
+// Ambil data dari Google Sheets
 fetch(URL_CSV)
   .then(res => res.text())
   .then(csv => {
@@ -158,6 +160,7 @@ fetch(URL_CSV)
         };
       }
     }).filter(Boolean);
+    filteredProducts = [...allProducts];
     renderProducts();
   })
   .catch(err => console.error("Gagal memuat CSV:", err));
@@ -166,7 +169,7 @@ function renderProducts() {
     const container = document.getElementById("productContainer");
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    const displayed = allProducts.slice(start, end);
+    const displayed = filteredProducts.slice(start, end);
 
     container.innerHTML = "";
     displayed.forEach(p => {
@@ -187,7 +190,7 @@ function renderProducts() {
 
 function renderPagination() {
     const pagination = document.getElementById("pagination");
-    const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
     pagination.innerHTML = `
         <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>Prev</button>
@@ -197,7 +200,7 @@ function renderPagination() {
 }
 
 function nextPage() {
-    if (currentPage < Math.ceil(allProducts.length / itemsPerPage)) {
+    if (currentPage < Math.ceil(filteredProducts.length / itemsPerPage)) {
         currentPage++;
         renderProducts();
     }
@@ -210,12 +213,13 @@ function prevPage() {
     }
 }
 
+// Live Search tanpa menghapus data asli
 document.getElementById("searchInput").addEventListener("input", function() {
     const q = this.value.toLowerCase();
-    currentPage = 1;
-    allProducts = allProducts.filter(p => 
+    filteredProducts = allProducts.filter(p => 
         p.kode.toLowerCase().includes(q) || p.judul.toLowerCase().includes(q)
     );
+    currentPage = 1;
     renderProducts();
 });
 </script>

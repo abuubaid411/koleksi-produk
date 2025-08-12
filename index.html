@@ -13,7 +13,7 @@
     }
     header {
         text-align: center;
-        padding: 30px 15px;
+        padding: 30px 15px 15px;
         background: linear-gradient(135deg, #ff5722, #ff8a50);
         color: white;
     }
@@ -25,6 +25,18 @@
         margin: 0;
         font-size: 14px;
         opacity: 0.9;
+    }
+    .search-box {
+        max-width: 400px;
+        margin: 15px auto 0;
+        display: flex;
+    }
+    .search-box input {
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
     }
     .container {
         display: grid;
@@ -87,6 +99,9 @@
 <header>
     <h1>Koleksi Produk</h1>
     <p>Temukan produk terbaik pilihan kami</p>
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Cari kode atau judul produk...">
+    </div>
 </header>
 
 <div class="container" id="productContainer"></div>
@@ -95,34 +110,52 @@
 const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTc9JpCGgKdNK_bjag5W5VuF7XdrdfekxI7VFKH8-PAyzakBWpmL7sdwPFUv5ElxVhhHGqMiYoHGrG/pub?output=csv";
 const DEFAULT_IMAGE = "https://via.placeholder.com/400x220?text=No+Image";
 
+let allProducts = [];
+
 fetch(URL_CSV)
   .then(res => res.text())
   .then(csv => {
     const rows = csv.split("\n").slice(1);
-    const container = document.getElementById("productContainer");
-
-    rows.forEach(row => {
+    allProducts = rows.map(row => {
       const cols = row.split(",");
       if (cols.length >= 4) {
-        const kode = cols[0].trim();
-        const judul = cols[1].trim();
-        const link = cols[2].trim();
-        const gambar = cols[3].trim() || DEFAULT_IMAGE;
+        return {
+          kode: cols[0].trim(),
+          judul: cols[1].trim(),
+          link: cols[2].trim(),
+          gambar: cols[3].trim() || DEFAULT_IMAGE
+        };
+      }
+    }).filter(Boolean);
+    renderProducts(allProducts);
+  })
+  .catch(err => console.error("Gagal memuat CSV:", err));
 
+function renderProducts(products) {
+    const container = document.getElementById("productContainer");
+    container.innerHTML = "";
+    products.forEach(p => {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-          <img src="${gambar}" alt="${judul}" onerror="this.src='${DEFAULT_IMAGE}'">
+          <img src="${p.gambar}" alt="${p.judul}" onerror="this.src='${DEFAULT_IMAGE}'">
           <div class="card-content">
-            <div class="card-title">${kode}. ${judul}</div>
-            <a href="${link}" target="_blank">Lihat Produk</a>
+            <div class="card-title">${p.kode}. ${p.judul}</div>
+            <a href="${p.link}" target="_blank">Lihat Produk</a>
           </div>
         `;
         container.appendChild(card);
-      }
     });
-  })
-  .catch(err => console.error("Gagal memuat CSV:", err));
+}
+
+// Filter saat mengetik
+document.getElementById("searchInput").addEventListener("input", function() {
+    const q = this.value.toLowerCase();
+    const filtered = allProducts.filter(p => 
+        p.kode.toLowerCase().includes(q) || p.judul.toLowerCase().includes(q)
+    );
+    renderProducts(filtered);
+});
 </script>
 
 </body>

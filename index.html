@@ -6,45 +6,56 @@
 <title>Koleksi Produk</title>
 <style>
     body {
-        font-family: Arial, sans-serif;
-        background: #f4f4f4;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #f9f9f9;
         margin: 0;
-        padding: 20px;
+        padding: 0;
     }
-    h1 {
+    header {
         text-align: center;
-        margin-bottom: 20px;
-        color: #333;
+        padding: 30px 15px;
+        background: linear-gradient(135deg, #ff5722, #ff8a50);
+        color: white;
+    }
+    header h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+    }
+    header p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.9;
     }
     .container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: auto;
     }
     .card {
         background: white;
-        border-radius: 12px;
+        border-radius: 14px;
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         display: flex;
         flex-direction: column;
-        height: 100%;
     }
     .card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
     }
     .card img {
         width: 100%;
-        height: 200px;
+        height: 220px;
         object-fit: cover;
-        background: #ddd;
-        flex-shrink: 0;
+        background: #eee;
     }
     .card-content {
         flex: 1;
-        padding: 12px;
+        padding: 14px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -52,8 +63,8 @@
     .card-title {
         font-size: 16px;
         font-weight: bold;
-        color: #444;
-        margin-bottom: 10px;
+        color: #333;
+        margin-bottom: 12px;
     }
     .card a {
         text-decoration: none;
@@ -73,17 +84,21 @@
 </head>
 <body>
 
-<h1>Koleksi Produk</h1>
+<header>
+    <h1>Koleksi Produk</h1>
+    <p>Temukan produk terbaik pilihan kami</p>
+</header>
+
 <div class="container" id="productContainer"></div>
 
 <script>
-const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTc9JpCGgKdNK_bjag5W5VuF7XdrdfekxI7VFKH8-PAyzakBWpmL7sdwPFUv5ElxVhhHGqMiYoHGrG/pub?output=csv"; // Ganti dengan link CSV kamu
-const DEFAULT_IMAGE = "https://via.placeholder.com/400x200?text=No+Image"; // Gambar default jika gagal load
+const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTc9JpCGgKdNK_bjag5W5VuF7XdrdfekxI7VFKH8-PAyzakBWpmL7sdwPFUv5ElxVhhHGqMiYoHGrG/pub?output=csv";
+const DEFAULT_IMAGE = "https://via.placeholder.com/400x220?text=No+Image";
 
 fetch(URL_CSV)
   .then(res => res.text())
   .then(csv => {
-    const rows = csv.split("\n").slice(1); // Skip header
+    const rows = csv.split("\n").slice(1);
     const container = document.getElementById("productContainer");
 
     rows.forEach(row => {
@@ -92,7 +107,7 @@ fetch(URL_CSV)
         const kode = cols[0].trim();
         const judul = cols[1].trim();
         const link = cols[2].trim();
-        const gambar = cols[3].trim();
+        const gambar = cols[3].trim() || DEFAULT_IMAGE;
 
         const card = document.createElement("div");
         card.className = "card";

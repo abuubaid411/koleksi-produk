@@ -37,6 +37,12 @@
         font-size: 14px;
         border: none;
         border-radius: 8px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        transition: box-shadow 0.2s ease;
+    }
+    .search-box input:focus {
+        box-shadow: 0 3px 8px rgba(0,0,0,0.25);
     }
     .container {
         display: grid;
@@ -92,6 +98,28 @@
     .card a:hover {
         background: #e64a19;
     }
+    .pagination {
+        text-align: center;
+        padding: 20px;
+    }
+    .pagination button {
+        background: #ff5722;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s ease;
+    }
+    .pagination button:hover {
+        background: #e64a19;
+    }
+    .pagination button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
 </style>
 </head>
 <body>
@@ -105,12 +133,15 @@
 </header>
 
 <div class="container" id="productContainer"></div>
+<div class="pagination" id="pagination"></div>
 
 <script>
 const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTc9JpCGgKdNK_bjag5W5VuF7XdrdfekxI7VFKH8-PAyzakBWpmL7sdwPFUv5ElxVhhHGqMiYoHGrG/pub?output=csv";
 const DEFAULT_IMAGE = "https://via.placeholder.com/400x220?text=No+Image";
 
 let allProducts = [];
+let currentPage = 1;
+const itemsPerPage = 8;
 
 fetch(URL_CSV)
   .then(res => res.text())
@@ -127,14 +158,18 @@ fetch(URL_CSV)
         };
       }
     }).filter(Boolean);
-    renderProducts(allProducts);
+    renderProducts();
   })
   .catch(err => console.error("Gagal memuat CSV:", err));
 
-function renderProducts(products) {
+function renderProducts() {
     const container = document.getElementById("productContainer");
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const displayed = allProducts.slice(start, end);
+
     container.innerHTML = "";
-    products.forEach(p => {
+    displayed.forEach(p => {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
@@ -146,15 +181,42 @@ function renderProducts(products) {
         `;
         container.appendChild(card);
     });
+
+    renderPagination();
 }
 
-// Filter saat mengetik
+function renderPagination() {
+    const pagination = document.getElementById("pagination");
+    const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+
+    pagination.innerHTML = `
+        <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>Prev</button>
+        <span>Halaman ${currentPage} dari ${totalPages}</span>
+        <button onclick="nextPage()" ${currentPage === totalPages ? "disabled" : ""}>Next</button>
+    `;
+}
+
+function nextPage() {
+    if (currentPage < Math.ceil(allProducts.length / itemsPerPage)) {
+        currentPage++;
+        renderProducts();
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderProducts();
+    }
+}
+
 document.getElementById("searchInput").addEventListener("input", function() {
     const q = this.value.toLowerCase();
-    const filtered = allProducts.filter(p => 
+    currentPage = 1;
+    allProducts = allProducts.filter(p => 
         p.kode.toLowerCase().includes(q) || p.judul.toLowerCase().includes(q)
     );
-    renderProducts(filtered);
+    renderProducts();
 });
 </script>
 

@@ -60,15 +60,6 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         display: flex;
         flex-direction: column;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeIn 0.6s forwards;
-    }
-    @keyframes fadeIn {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
     }
     .card:hover {
         transform: translateY(-5px);
@@ -129,8 +120,7 @@
         background: #ccc;
         cursor: not-allowed;
     }
-
-    /* Tombol Scroll to Top */
+    /* Tombol scroll-top */
     #scrollTopBtn {
         position: fixed;
         bottom: 20px;
@@ -148,19 +138,20 @@
         transition: background 0.3s, opacity 0.3s;
         z-index: 999;
         opacity: 0.7;
+        padding: 0;
     }
     #scrollTopBtn:hover {
-        background: rgba(255,87,34,1); /* oranye jelas saat hover */
+        background: rgba(255,87,34,1);
         opacity: 1;
     }
     #scrollTopBtn img {
-        width: 60%;
+        width: 55%;
         height: auto;
         filter: brightness(80%); /* putih samar */
         transition: filter 0.3s;
     }
     #scrollTopBtn:hover img {
-        filter: brightness(120%); /* putih lebih terang */
+        filter: brightness(120%); /* putih lebih jelas */
     }
 </style>
 </head>
@@ -179,7 +170,7 @@
 
 <!-- Tombol Scroll to Top -->
 <button id="scrollTopBtn" title="Kembali ke atas">
-  <img src="https://static.thenounproject.com/png/108693-200.png" alt="Scroll ke atas"/>
+  <img src="up.png" alt="Scroll ke atas"/>
 </button>
 
 <script>
@@ -219,10 +210,9 @@ function renderProducts() {
     const displayed = filteredProducts.slice(start, end);
 
     container.innerHTML = "";
-    displayed.forEach((p, i) => {
+    displayed.forEach(p => {
         const card = document.createElement("div");
         card.className = "card";
-        card.style.animationDelay = `${i * 0.1}s`; // delay animasi biar bergelombang
         card.innerHTML = `
           <img src="${p.gambar}" alt="${p.judul}" onerror="this.src='${DEFAULT_IMAGE}'">
           <div class="card-content">
@@ -234,6 +224,7 @@ function renderProducts() {
     });
 
     renderPagination();
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // scroll ke atas tiap ganti halaman
 }
 
 function renderPagination() {
@@ -251,7 +242,6 @@ function nextPage() {
     if (currentPage < Math.ceil(filteredProducts.length / itemsPerPage)) {
         currentPage++;
         renderProducts();
-        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 }
 
@@ -259,11 +249,10 @@ function prevPage() {
     if (currentPage > 1) {
         currentPage--;
         renderProducts();
-        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 }
 
-// Live Search tanpa menghapus data asli
+// Live Search
 document.getElementById("searchInput").addEventListener("input", function() {
     const q = this.value.toLowerCase();
     filteredProducts = allProducts.filter(p => 
@@ -273,10 +262,10 @@ document.getElementById("searchInput").addEventListener("input", function() {
     renderProducts();
 });
 
-// Tombol scroll ke atas
+// Scroll to Top button
 const scrollTopBtn = document.getElementById("scrollTopBtn");
 window.addEventListener('scroll', () => {
-    scrollTopBtn.style.display = (window.scrollY > 200) ? 'flex' : 'none';
+    scrollTopBtn.style.display = window.scrollY > 200 ? 'flex' : 'none';
 });
 scrollTopBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

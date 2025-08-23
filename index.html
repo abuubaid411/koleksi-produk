@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Koleksi Produk</title>
+
 <style>
     body {
         font-family: 'Segoe UI', Arial, sans-serif;
@@ -121,46 +122,43 @@
         cursor: not-allowed;
     }
 
-    /* Tombol Scroll To Top */
-    #scrollTopBtn {
+    /* Spinner icon belanja */
+    #loading {
         position: fixed;
-        bottom: 80px;
-        right: 20px;
-        background: rgba(255,87,34,0.6); /* orange samar */
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.95);
         display: flex;
-        align-items: center;
         justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.25);
-        transition: background 0.3s, opacity 0.3s;
-        z-index: 999;
-        opacity: 0; /* awalnya tidak terlihat */
-        pointer-events: none;
-        padding: 0;
+        align-items: center;
+        z-index: 9999;
+        flex-direction: column;
+        color: #ff5722;
+        font-size: 16px;
     }
-    #scrollTopBtn.show {
-        opacity: 1; /* fade-in */
-        pointer-events: auto;
+    .shopping-icon {
+        width: 70px;
+        height: 70px;
+        fill: #ff5722;
+        animation: bounce 1s infinite;
     }
-    #scrollTopBtn:hover {
-        background: rgba(255,87,34,1); /* orange penuh */
-    }
-    #scrollTopBtn img {
-        width: 55%;
-        height: auto;
-        filter: brightness(0) invert(1); /* putih */
-        transition: filter 0.3s;
-    }
-    #scrollTopBtn:hover img {
-        filter: brightness(100%); /* putih lebih jelas */
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
     }
 </style>
 </head>
 <body>
+
+<!-- Spinner -->
+<div id="loading">
+    <svg class="shopping-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M7 4V2h10v2h5v2H2V4h5zm1 4h8l1.5 12h-11L8 8zm2 2v8h4v-8h-4z"/>
+    </svg>
+    <p>Memuat produk...</p>
+</div>
 
 <header>
     <h1>Koleksi Produk</h1>
@@ -173,11 +171,6 @@
 <div class="container" id="productContainer"></div>
 <div class="pagination" id="pagination"></div>
 
-<!-- Tombol Scroll to Top -->
-<button id="scrollTopBtn" title="Kembali ke atas">
-  <img src="up.png" alt="Scroll ke atas"/>
-</button>
-
 <script>
 const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTc9JpCGgKdNK_bjag5W5VuF7XdrdfekxI7VFKH8-PAyzakBWpmL7sdwPFUv5ElxVhhHGqMiYoHGrG/pub?output=csv";
 const DEFAULT_IMAGE = "https://via.placeholder.com/400x220?text=No+Image";
@@ -187,7 +180,6 @@ let filteredProducts = [];
 let currentPage = 1;
 const itemsPerPage = 8;
 
-// Ambil data dari Google Sheets
 fetch(URL_CSV)
   .then(res => res.text())
   .then(csv => {
@@ -206,7 +198,10 @@ fetch(URL_CSV)
     filteredProducts = [...allProducts];
     renderProducts();
   })
-  .catch(err => console.error("Gagal memuat CSV:", err));
+  .catch(err => console.error("Gagal memuat CSV:", err))
+  .finally(() => {
+    document.getElementById("loading").style.display = "none";
+  });
 
 function renderProducts() {
     const container = document.getElementById("productContainer");
@@ -229,7 +224,6 @@ function renderProducts() {
     });
 
     renderPagination();
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // otomatis scroll ke atas tiap ganti halaman
 }
 
 function renderPagination() {
@@ -257,7 +251,6 @@ function prevPage() {
     }
 }
 
-// Live Search
 document.getElementById("searchInput").addEventListener("input", function() {
     const q = this.value.toLowerCase();
     filteredProducts = allProducts.filter(p => 
@@ -266,21 +259,7 @@ document.getElementById("searchInput").addEventListener("input", function() {
     currentPage = 1;
     renderProducts();
 });
-
-// Scroll to Top Button
-const scrollTopBtn = document.getElementById("scrollTopBtn");
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 200) {
-        scrollTopBtn.classList.add('show');
-    } else {
-        scrollTopBtn.classList.remove('show');
-    }
-});
-scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
 </script>
 
 </body>
 </html>
-

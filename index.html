@@ -120,7 +120,8 @@
         background: #ccc;
         cursor: not-allowed;
     }
-    /* Tombol scroll-top */
+
+    /* Tombol Scroll To Top */
     #scrollTopBtn {
         position: fixed;
         bottom: 20px;
@@ -130,28 +131,32 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        display: none;
+        display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         box-shadow: 0 3px 6px rgba(0,0,0,0.25);
         transition: background 0.3s, opacity 0.3s;
         z-index: 999;
-        opacity: 0.7;
+        opacity: 0; /* awalnya tidak terlihat */
+        pointer-events: none;
         padding: 0;
     }
+    #scrollTopBtn.show {
+        opacity: 1; /* fade-in */
+        pointer-events: auto;
+    }
     #scrollTopBtn:hover {
-        background: rgba(255,87,34,1);
-        opacity: 1;
+        background: rgba(255,87,34,1); /* orange penuh */
     }
     #scrollTopBtn img {
         width: 55%;
         height: auto;
-        filter: brightness(80%); /* putih samar */
+        filter: brightness(0) invert(1); /* putih */
         transition: filter 0.3s;
     }
     #scrollTopBtn:hover img {
-        filter: brightness(120%); /* putih lebih jelas */
+        filter: brightness(100%); /* putih lebih jelas */
     }
 </style>
 </head>
@@ -224,7 +229,7 @@ function renderProducts() {
     });
 
     renderPagination();
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // scroll ke atas tiap ganti halaman
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // otomatis scroll ke atas tiap ganti halaman
 }
 
 function renderPagination() {
@@ -262,10 +267,14 @@ document.getElementById("searchInput").addEventListener("input", function() {
     renderProducts();
 });
 
-// Scroll to Top button
+// Scroll to Top Button
 const scrollTopBtn = document.getElementById("scrollTopBtn");
 window.addEventListener('scroll', () => {
-    scrollTopBtn.style.display = window.scrollY > 200 ? 'flex' : 'none';
+    if (window.scrollY > 200) {
+        scrollTopBtn.classList.add('show');
+    } else {
+        scrollTopBtn.classList.remove('show');
+    }
 });
 scrollTopBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -60,6 +60,15 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         display: flex;
         flex-direction: column;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.6s forwards;
+    }
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     .card:hover {
         transform: translateY(-5px);
@@ -121,29 +130,37 @@
         cursor: not-allowed;
     }
 
-    /* Tombol Scroll ke Atas */
+    /* Tombol Scroll to Top */
     #scrollTopBtn {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: #ff5722; /* oranye */
+        background: rgba(255,87,34,0.6); /* orange samar */
         border: none;
-        padding: 14px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
-        cursor: pointer;
         display: none;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+        transition: background 0.3s, opacity 0.3s;
         z-index: 999;
-        transition: box-shadow 0.2s;
+        opacity: 0.7;
     }
-    #scrollTopBtn svg {
-        width: 24px;
-        height: 24px;
-        fill: white;
+    #scrollTopBtn:hover {
+        background: rgba(255,87,34,1); /* oranye jelas saat hover */
+        opacity: 1;
     }
-    #scrollTopBtn:hover svg path {
-        stroke: white;
-        stroke-width: 2; /* panah jadi lebih tebal saat hover */
+    #scrollTopBtn img {
+        width: 60%;
+        height: auto;
+        filter: brightness(80%); /* putih samar */
+        transition: filter 0.3s;
+    }
+    #scrollTopBtn:hover img {
+        filter: brightness(120%); /* putih lebih terang */
     }
 </style>
 </head>
@@ -160,11 +177,9 @@
 <div class="container" id="productContainer"></div>
 <div class="pagination" id="pagination"></div>
 
-<!-- Tombol Scroll ke Atas -->
+<!-- Tombol Scroll to Top -->
 <button id="scrollTopBtn" title="Kembali ke atas">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-    <path d="M12 8l6 6H6z"/>
-  </svg>
+  <img src="https://static.thenounproject.com/png/108693-200.png" alt="Scroll ke atas"/>
 </button>
 
 <script>
@@ -204,9 +219,10 @@ function renderProducts() {
     const displayed = filteredProducts.slice(start, end);
 
     container.innerHTML = "";
-    displayed.forEach(p => {
+    displayed.forEach((p, i) => {
         const card = document.createElement("div");
         card.className = "card";
+        card.style.animationDelay = `${i * 0.1}s`; // delay animasi biar bergelombang
         card.innerHTML = `
           <img src="${p.gambar}" alt="${p.judul}" onerror="this.src='${DEFAULT_IMAGE}'">
           <div class="card-content">
@@ -218,7 +234,6 @@ function renderProducts() {
     });
 
     renderPagination();
-    window.scrollTo({ top: 0, behavior: "smooth" }); // tiap ganti halaman scroll ke atas
 }
 
 function renderPagination() {
@@ -236,6 +251,7 @@ function nextPage() {
     if (currentPage < Math.ceil(filteredProducts.length / itemsPerPage)) {
         currentPage++;
         renderProducts();
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 }
 
@@ -243,10 +259,11 @@ function prevPage() {
     if (currentPage > 1) {
         currentPage--;
         renderProducts();
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 }
 
-// Live Search
+// Live Search tanpa menghapus data asli
 document.getElementById("searchInput").addEventListener("input", function() {
     const q = this.value.toLowerCase();
     filteredProducts = allProducts.filter(p => 
@@ -258,16 +275,12 @@ document.getElementById("searchInput").addEventListener("input", function() {
 
 // Tombol scroll ke atas
 const scrollTopBtn = document.getElementById("scrollTopBtn");
-window.onscroll = function() {
-    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-        scrollTopBtn.style.display = "block";
-    } else {
-        scrollTopBtn.style.display = "none";
-    }
-};
-scrollTopBtn.onclick = function() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-};
+window.addEventListener('scroll', () => {
+    scrollTopBtn.style.display = (window.scrollY > 200) ? 'flex' : 'none';
+});
+scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 </script>
 
 </body>

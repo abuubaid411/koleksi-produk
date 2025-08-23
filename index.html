@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Koleksi Produk</title>
-
 <style>
     body {
         font-family: 'Segoe UI', Arial, sans-serif;
@@ -148,6 +147,27 @@
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-10px); }
     }
+
+    /* Tombol scroll to top */
+    #scrollTopBtn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255,87,34,0.7); /* orange samar */
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+        display: none;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        transition: background 0.3s;
+        z-index: 999;
+    }
+    #scrollTopBtn:hover {
+        background: rgba(255,87,34,1);
+    }
 </style>
 </head>
 <body>
@@ -170,6 +190,9 @@
 
 <div class="container" id="productContainer"></div>
 <div class="pagination" id="pagination"></div>
+
+<!-- Tombol Scroll to Top -->
+<button id="scrollTopBtn" title="Kembali ke atas">↑</button>
 
 <script>
 const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTc9JpCGgKdNK_bjag5W5VuF7XdrdfekxI7VFKH8-PAyzakBWpmL7sdwPFUv5ElxVhhHGqMiYoHGrG/pub?output=csv";
@@ -224,6 +247,9 @@ function renderProducts() {
     });
 
     renderPagination();
+
+    // setiap render halaman baru, scroll ke atas
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function renderPagination() {
@@ -259,6 +285,21 @@ document.getElementById("searchInput").addEventListener("input", function() {
     currentPage = 1;
     renderProducts();
 });
+
+// Tombol scroll ke atas
+const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+window.onscroll = function() {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        scrollTopBtn.style.display = "block";
+    } else {
+        scrollTopBtn.style.display = "none";
+    }
+};
+
+scrollTopBtn.onclick = function() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+};
 </script>
 
 </body>

@@ -1,0 +1,160 @@
+/* style.css */
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+header {
+    text-align: center;
+    padding: 30px 15px 15px;
+    background: linear-gradient(135deg, #ff5722, #ff8a50);
+    color: white;
+}
+header h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+}
+header p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+.search-box {
+    max-width: 400px;
+    margin: 15px auto 0;
+    display: flex;
+}
+.search-box input {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: box-shadow 0.2s ease;
+}
+.search-box input:focus {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+}
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+.card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+.card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: #eee;
+}
+.card-content {
+    flex: 1;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 12px;
+}
+.card a {
+    text-decoration: none;
+    background: #ff5722;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 8px;
+    display: block;
+    transition: background 0.2s ease;
+}
+.card a:hover {
+    background: #e64a19;
+}
+.pagination {
+    text-align: center;
+    padding: 20px;
+}
+.pagination button {
+    background: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+.pagination button:hover {
+    background: #e64a19;
+}
+.pagination button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+    color: #ff5722;
+    font-size: 16px;
+}
+.shopping-icon {
+    width: 70px;
+    height: 70px;
+    fill: #ff5722;
+    animation: bounce 1s infinite;
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+.no-results i {
+    font-size: 50px;
+    margin-bottom: 15px;
+    color: #ccc;
+}
+footer {
+    background: #e2e8f0;
+    padding: 20px;
+    text-align: center;
+    color: #4a5568;
+    margin-top: 40px;
+}

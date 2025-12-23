@@ -101,6 +101,61 @@ header p {
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* Platform filter di samping search */
+.platform-filter {
+    display: flex;
+    gap: 6px;
+    margin-left: 8px;
+}
+
+.filter-btn {
+    border: none;
+    background: white;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.25s ease;
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background: #6a11cb;
+    color: white;
+}
+
+/* Warna ikon sesuai platform */
+.filter-btn[data-platform="shopee"] i {
+    color: var(--shopee-color);
+}
+
+.filter-btn[data-platform="tiktok"] i {
+    color: var(--tiktok-color);
+}
+
+.filter-btn.active i {
+    color: white !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .search-box {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .platform-filter {
+        justify-content: center;
+        margin-left: 0;
+    }
+}
+
 .platform-badge {
     position: absolute;
     top: 12px;

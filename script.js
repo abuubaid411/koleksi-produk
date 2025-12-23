@@ -5,6 +5,7 @@ let allProducts = [];
 let filteredProducts = [];
 let currentPage = 1;
 const itemsPerPage = 8;
+let currentPlatform = "all";
 
 // Fungsi untuk mendeteksi platform dari URL - Tampilkan 'tiktok' untuk Tokopedia
 function detectPlatform(link) {
@@ -145,16 +146,39 @@ function renderProducts(hideLoading = false) {
 // Fungsi setupSearch
 function setupSearch() {
     const searchInput = document.getElementById("searchInput");
-    if (searchInput) {
-        searchInput.addEventListener("input", function () {
-            const q = this.value.toLowerCase();
-            filteredProducts = allProducts.filter(p =>
-                p.kode.toLowerCase().includes(q) || p.judul.toLowerCase().includes(q)
-            );
-            currentPage = 1;
-            renderProducts(true);
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    function applyFilter() {
+        const q = searchInput.value.toLowerCase();
+
+        filteredProducts = allProducts.filter(p => {
+            const matchText =
+                p.kode.toLowerCase().includes(q) ||
+                p.judul.toLowerCase().includes(q);
+
+            const matchPlatform =
+                currentPlatform === "all" || p.platform === currentPlatform;
+
+            return matchText && matchPlatform;
         });
+
+        currentPage = 1;
+        renderProducts(true);
     }
+
+    if (searchInput) {
+        searchInput.addEventListener("input", applyFilter);
+    }
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            filterButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            currentPlatform = btn.dataset.platform;
+            applyFilter();
+        });
+    });
 }
 
 // Fungsi pagination
